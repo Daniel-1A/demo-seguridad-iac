@@ -13,33 +13,30 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# Red privada ilustrativa; no desplegar este demo.
 resource "aws_security_group" "demo" {
-  name        = "demo-inseguro"
-  description = "Ejemplo didactico: acceso administrativo expuesto"
+  name        = "demo-restringido"
+  description = "PostgreSQL accesible solo desde la red privada de aplicacion"
   vpc_id      = "vpc-00000000000000000"
 
   ingress {
-    description = "SSH abierto para demostrar el gate"
-    from_port   = 22
-    to_port     = 22
+    description = "PostgreSQL desde la aplicacion"
+    from_port   = 5432
+    to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "RDP abierto para demostrar el gate"
-    from_port   = 3389
-    to_port     = 3389
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["10.0.10.0/24"]
   }
 
   egress {
-    description = "Salida sin restricciones"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS solo a la red privada de servicios"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  tags = {
+    Owner = "equipo-seguridad-iac"
   }
 }
 
@@ -56,7 +53,8 @@ resource "aws_db_instance" "demo" {
   instance_class          = "db.t3.micro"
   username                = "demo_user"
   manage_master_user_password = true
-  publicly_accessible     = true
+  publicly_accessible     = false
+  vpc_security_group_ids  = [aws_security_group.demo.id]
   storage_encrypted       = false
   backup_retention_period = 0
   deletion_protection     = false

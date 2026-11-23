@@ -1,0 +1,2 @@
+# Version fija para comparar resultados locales y CI.
+checkov==3.4.6

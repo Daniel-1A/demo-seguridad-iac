@@ -43,7 +43,11 @@ resource "aws_security_group" "demo" {
 resource "aws_ebs_volume" "demo" {
   availability_zone = "us-east-1a"
   size              = 1
-  encrypted         = false
+  encrypted         = true
+  kms_key_id        = data.aws_kms_key.demo.arn
+  tags = {
+    Owner = "equipo-seguridad-iac"
+  }
 }
 
 resource "aws_db_instance" "demo" {
@@ -62,4 +66,14 @@ resource "aws_db_instance" "demo" {
   multi_az                = false
   auto_minor_version_upgrade = false
   copy_tags_to_snapshot   = false
+}
+
+# Referencias didacticas a recursos preexistentes: no son credenciales.
+# Un despliegue real requiere provisionar la clave y el rol con permisos correctos.
+data "aws_kms_key" "demo" {
+  key_id = "alias/demo-seguridad-iac"
+}
+
+data "aws_iam_role" "rds_monitoring" {
+  name = "demo-rds-enhanced-monitoring"
 }

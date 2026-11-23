@@ -1,0 +1,330 @@
+ demo-seguridad-iac  $pythonDemo = (Resolve-Path .\.venv\Scripts\python.exe -ErrorAction Stop).Path
+ >  Push-Location reportes/linea-base
+ >  
+ >  try {
+ >      & $pythonDemo -c "from checkov.main import Checkov; import sys; sys.exit(Checkov().run())" -d . --compact 2>&1 |
+ >          Tee-Object -FilePath ..\linea-base-local.txt
+ >      $codigoEscaneo = $LASTEXITCODE
+ >  }
+ >  finally {
+ >      Pop-Location
+ >  }
+ >  
+ >  Write-Output "Codigo de salida: $codigoEscaneo"
+
+
+       _               _
+   ___| |__   ___  ___| | _______   __
+  / __| '_ \ / _ \/ __| |/ / _ \ \ / /
+ | (__| | | |  __/ (__|   < (_) \ V /
+  \___|_| |_|\___|\___|_|\_\___/ \_/
+
+By Prisma Cloud | version: 3.4.6 
+Update available 3.4.6 -> 3.4.7
+Run pip3 install -U checkov to update 
+
+
+terraform scan results:
+
+Passed checks: 13, Failed checks: 20, Skipped checks: 0
+
+Check: CKV_AWS_3: "Ensure all data stored in the EBS is securely encrypted"
+        PASSED for resource: aws_ebs_volume.ejemplo
+        File: \ejemplos-politica\falla\main.tf:2-6
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/general-3-encrypt-ebs-volume
+Check: CKV_AWS_3: "Ensure all data stored in the EBS is securely encrypted"
+        PASSED for resource: aws_ebs_volume.ejemplo
+        File: \ejemplos-politica\pasa\main.tf:2-9
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/general-3-encrypt-ebs-volume
+Check: CKV_AWS_41: "Ensure no hard coded AWS access key and secret key exists in provider"
+        PASSED for resource: aws.default
+        File: \infra\main.tf:12-14
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/secrets-policies/bc-aws-secrets-5
+Check: CKV_AWS_23: "Ensure every security group and rule has a description"
+        PASSED for resource: aws_security_group.demo
+        File: \infra\main.tf:16-44
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-31
+Check: CKV_AWS_260: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 80"
+        PASSED for resource: aws_security_group.demo
+        File: \infra\main.tf:16-44
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-groups-do-not-allow-ingress-from-00000-to-port-80
+Check: CKV_AWS_277: "Ensure no security groups allow ingress from 0.0.0.0:0 to port -1"
+        PASSED for resource: aws_security_group.demo
+        File: \infra\main.tf:16-44
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-aws-security-group-does-not-allow-all-traffic-on-all-ports
+Check: CKV_AWS_211: "Ensure RDS uses a modern CaCert"
+        PASSED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-aws-rds-uses-a-modern-cacert
+Check: CKV_AWS_354: "Ensure RDS Performance Insights are encrypted using KMS CMKs"
+        PASSED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-354
+Check: CKV_AWS_388: "Ensure AWS Aurora PostgreSQL is not exposed to local file read vulnerability"
+        PASSED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+Check: CKV2_AWS_2: "Ensure that only encrypted EBS volumes are attached to EC2 instances"
+        PASSED for resource: aws_ebs_volume.ejemplo
+        File: \ejemplos-politica\falla\main.tf:2-6
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-only-encrypted-ebs-volumes-are-attached-to-ec2-instances
+Check: CKV2_AWS_2: "Ensure that only encrypted EBS volumes are attached to EC2 instances"
+        PASSED for resource: aws_ebs_volume.ejemplo
+        File: \ejemplos-politica\pasa\main.tf:2-9
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-only-encrypted-ebs-volumes-are-attached-to-ec2-instances
+Check: CKV2_AWS_2: "Ensure that only encrypted EBS volumes are attached to EC2 instances"
+        PASSED for resource: aws_ebs_volume.demo
+        File: \infra\main.tf:46-50
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-only-encrypted-ebs-volumes-are-attached-to-ec2-instances
+Check: CKV2_AWS_69: "Ensure AWS RDS database instance configured with encryption in transit"
+        PASSED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-2-69
+Check: CKV_AWS_189: "Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK)"
+        FAILED for resource: aws_ebs_volume.ejemplo
+        File: \ejemplos-politica\falla\main.tf:2-6
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-general-109
+Check: CKV_AWS_189: "Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK)"
+        FAILED for resource: aws_ebs_volume.ejemplo
+        File: \ejemplos-politica\pasa\main.tf:2-9
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-general-109
+Check: CKV_AWS_382: "Ensure no security groups allow egress from 0.0.0.0:0 to port -1"
+        FAILED for resource: aws_security_group.demo
+        File: \infra\main.tf:16-44
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/bc-aws-382
+Check: CKV_AWS_24: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 22"
+        FAILED for resource: aws_security_group.demo
+        File: \infra\main.tf:16-44
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-1-port-security
+Check: CKV_AWS_25: "Ensure no security groups allow ingress from 0.0.0.0:0 to port 3389"
+        FAILED for resource: aws_security_group.demo
+        File: \infra\main.tf:16-44
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/networking-2
+Check: CKV_AWS_3: "Ensure all data stored in the EBS is securely encrypted"
+        FAILED for resource: aws_ebs_volume.demo
+        File: \infra\main.tf:46-50
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/general-3-encrypt-ebs-volume
+Check: CKV_AWS_189: "Ensure EBS Volume is encrypted by KMS using a customer managed Key (CMK)"
+        FAILED for resource: aws_ebs_volume.demo
+        File: \infra\main.tf:46-50
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-general-109
+Check: CKV_AWS_133: "Ensure that RDS instances has backup policy"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-rds-instances-have-backup-policy
+Check: CKV_AWS_129: "Ensure that respective logs of Amazon Relational Database Service (Amazon RDS) are enabled"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-that-respective-logs-of-amazon-relational-database-service-amazon-rds-are-enabled
+Check: CKV_AWS_226: "Ensure DB instance gets all minor upgrades automatically"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-aws-db-instance-gets-all-minor-upgrades-automatically
+Check: CKV_AWS_16: "Ensure all data stored in the RDS is securely encrypted at rest"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/general-4
+Check: CKV_AWS_118: "Ensure that enhanced monitoring is enabled for Amazon RDS instances"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/ensure-that-enhanced-monitoring-is-enabled-for-amazon-rds-instances
+Check: CKV_AWS_161: "Ensure RDS database has IAM authentication enabled"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-iam-policies/ensure-rds-database-has-iam-authentication-enabled
+Check: CKV_AWS_293: "Ensure that AWS database instances have deletion protection enabled"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-293
+Check: CKV_AWS_353: "Ensure that RDS instances have performance insights enabled"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-logging-policies/bc-aws-353
+Check: CKV_AWS_157: "Ensure that RDS instances have Multi-AZ enabled"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/general-73
+Check: CKV_AWS_17: "Ensure all data stored in RDS is not publicly accessible"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/public-policies/public-2
+Check: CKV2_AWS_30: "Ensure Postgres RDS as aws_db_instance has Query Logging enabled"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-postgres-rds-has-query-logging-enabled
+Check: CKV2_AWS_60: "Ensure RDS instance with copy tags to snapshots is enabled"
+        FAILED for resource: aws_db_instance.demo
+        File: \infra\main.tf:52-67
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/bc-aws-2-60
+Check: CKV2_AWS_5: "Ensure that Security Groups are attached to another resource"
+        FAILED for resource: aws_security_group.demo
+        File: \infra\main.tf:16-44
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-networking-policies/ensure-that-security-groups-are-attached-to-ec2-instances-or-elastic-network-interfaces-enis
+dockerfile scan results:
+
+Passed checks: 5, Failed checks: 2, Skipped checks: 0
+
+Check: CKV_DOCKER_11: "Ensure From Alias are unique for multistage builds."
+        PASSED for resource: /docker\Dockerfile.
+        File: /docker\Dockerfile:1-6
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/docker-policies/docker-policy-index/ensure-docker-from-alias-is-unique-for-multistage-builds
+Check: CKV_DOCKER_7: "Ensure the base image uses a non latest version tag"
+        PASSED for resource: /docker\Dockerfile.FROM
+        File: /docker\Dockerfile:2-2
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/docker-policies/docker-policy-index/ensure-the-base-image-uses-a-non-latest-version-tag
+Check: CKV_DOCKER_1: "Ensure port 22 is not exposed"
+        PASSED for resource: /docker\Dockerfile.
+        File: /docker\Dockerfile:1-6
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/docker-policies/docker-policy-index/ensure-port-22-is-not-exposed
+Check: CKV_DOCKER_10: "Ensure that WORKDIR values are absolute paths"
+        PASSED for resource: /docker\Dockerfile.
+        File: /docker\Dockerfile:1-6
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/docker-policies/docker-policy-index/ensure-docker-workdir-values-are-absolute-paths
+Check: CKV_DOCKER_3: "Ensure that a user for the container has been created"
+        PASSED for resource: /docker\Dockerfile.USER
+        File: /docker\Dockerfile:4-4
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/docker-policies/docker-policy-index/ensure-that-a-user-for-the-container-has-been-created
+Check: CKV_DOCKER_8: "Ensure the last USER is not root"
+        FAILED for resource: /docker\Dockerfile.USER
+        File: /docker\Dockerfile:4-4
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/docker-policies/docker-policy-index/ensure-the-last-user-is-not-root
+Check: CKV_DOCKER_2: "Ensure that HEALTHCHECK instructions have been added to container images"
+        FAILED for resource: /docker\Dockerfile.
+        File: /docker\Dockerfile:1-6
+        Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/docker-policies/docker-policy-index/ensure-that-healthcheck-instructions-have-been-added-to-container-images
+github_actions scan results:
+
+Passed checks: 44, Failed checks: 0, Skipped checks: 0
+
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac)
+        File: /.github\workflows\iac-security.yml:13-77
+Check: CKV_GHA_5: "Found artifact build without evidence of cosign sign execution in pipeline"
+        PASSED for resource: jobs
+        File: /.github\workflows\iac-security.yml:12-77
+Check: CKV_GHA_6: "Found artifact build without evidence of cosign sbom attestation in pipeline"
+        PASSED for resource: jobs
+        File: /.github\workflows\iac-security.yml:12-77
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac)
+        File: /.github\workflows\iac-security.yml:13-77
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac)
+        File: /.github\workflows\iac-security.yml:13-77
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac)
+        File: /.github\workflows\iac-security.yml:13-77
+Check: CKV_GHA_7: "The build output cannot be affected by user parameters other than the build entry point and the top-level source location. GitHub Actions workflow_dispatch inputs MUST be empty. "
+        PASSED for resource: on(Seguridad IaC)
+        File: /.github\workflows\iac-security.yml:4-9
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[1](Descargar codigo)
+        File: /.github\workflows\iac-security.yml:19-23
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[2](Preparar Python)
+        File: /.github\workflows\iac-security.yml:22-28
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[3](Instalar Checkov con version fija)
+        File: /.github\workflows\iac-security.yml:27-31
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[4](Generar reporte SARIF)
+        File: /.github\workflows\iac-security.yml:30-37
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[5](Guardar reporte descargable)
+        File: /.github\workflows\iac-security.yml:36-45
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[6](Publicar en Code Scanning)
+        File: /.github\workflows\iac-security.yml:44-52
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[7](Gate Checkov)
+        File: /.github\workflows\iac-security.yml:51-58
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[8](Verificar caso que pasa de politica propia)
+        File: /.github\workflows\iac-security.yml:57-64
+Check: CKV_GHA_1: "Ensure ACTIONS_ALLOW_UNSECURE_COMMANDS isn't true on environment variables"
+        PASSED for resource: jobs(iac).steps[9](Verificar que la politica rechaza el caso inseguro)
+        File: /.github\workflows\iac-security.yml:63-77
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[1](Descargar codigo)
+        File: /.github\workflows\iac-security.yml:19-23
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[2](Preparar Python)
+        File: /.github\workflows\iac-security.yml:22-28
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[3](Instalar Checkov con version fija)
+        File: /.github\workflows\iac-security.yml:27-31
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[4](Generar reporte SARIF)
+        File: /.github\workflows\iac-security.yml:30-37
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[5](Guardar reporte descargable)
+        File: /.github\workflows\iac-security.yml:36-45
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[6](Publicar en Code Scanning)
+        File: /.github\workflows\iac-security.yml:44-52
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[7](Gate Checkov)
+        File: /.github\workflows\iac-security.yml:51-58
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[8](Verificar caso que pasa de politica propia)
+        File: /.github\workflows\iac-security.yml:57-64
+Check: CKV_GHA_4: "Suspicious use of netcat with IP address"
+        PASSED for resource: jobs(iac).steps[9](Verificar que la politica rechaza el caso inseguro)
+        File: /.github\workflows\iac-security.yml:63-77
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[1](Descargar codigo)
+        File: /.github\workflows\iac-security.yml:19-23
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[2](Preparar Python)
+        File: /.github\workflows\iac-security.yml:22-28
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[3](Instalar Checkov con version fija)
+        File: /.github\workflows\iac-security.yml:27-31
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[4](Generar reporte SARIF)
+        File: /.github\workflows\iac-security.yml:30-37
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[5](Guardar reporte descargable)
+        File: /.github\workflows\iac-security.yml:36-45
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[6](Publicar en Code Scanning)
+        File: /.github\workflows\iac-security.yml:44-52
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[7](Gate Checkov)
+        File: /.github\workflows\iac-security.yml:51-58
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[8](Verificar caso que pasa de politica propia)
+        File: /.github\workflows\iac-security.yml:57-64
+Check: CKV_GHA_2: "Ensure run commands are not vulnerable to shell injection"
+        PASSED for resource: jobs(iac).steps[9](Verificar que la politica rechaza el caso inseguro)
+        File: /.github\workflows\iac-security.yml:63-77
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[1](Descargar codigo)
+        File: /.github\workflows\iac-security.yml:19-23
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[2](Preparar Python)
+        File: /.github\workflows\iac-security.yml:22-28
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[3](Instalar Checkov con version fija)
+        File: /.github\workflows\iac-security.yml:27-31
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[4](Generar reporte SARIF)
+        File: /.github\workflows\iac-security.yml:30-37
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[5](Guardar reporte descargable)
+        File: /.github\workflows\iac-security.yml:36-45
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[6](Publicar en Code Scanning)
+        File: /.github\workflows\iac-security.yml:44-52
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[7](Gate Checkov)
+        File: /.github\workflows\iac-security.yml:51-58
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[8](Verificar caso que pasa de politica propia)
+        File: /.github\workflows\iac-security.yml:57-64
+Check: CKV_GHA_3: "Suspicious use of curl with secrets"
+        PASSED for resource: jobs(iac).steps[9](Verificar que la politica rechaza el caso inseguro)
+        File: /.github\workflows\iac-security.yml:63-77
+Check: CKV2_GHA_1: "Ensure top-level permissions are not set to write-all"
+        PASSED for resource: on(Seguridad IaC)
+        File: /.github\workflows\iac-security.yml:9-12
+Codigo de salida: 1

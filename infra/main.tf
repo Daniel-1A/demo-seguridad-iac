@@ -1,4 +1,4 @@
-# DEMO INTENCIONALMENTE INSEGURO. Solo analisis estatico; no ejecutar apply.
+# DEMO REMEDIADO para analisis estatico. No ejecutar terraform apply.
 terraform {
   required_version = ">= 1.6.0"
   required_providers {
@@ -54,18 +54,32 @@ resource "aws_db_instance" "demo" {
   identifier              = "demo-inseguro"
   allocated_storage       = 20
   engine                  = "postgres"
+  engine_version          = "16"
   instance_class          = "db.t3.micro"
   username                = "demo_user"
   manage_master_user_password = true
   publicly_accessible     = false
   vpc_security_group_ids  = [aws_security_group.demo.id]
-  storage_encrypted       = false
-  backup_retention_period = 0
-  deletion_protection     = false
-  skip_final_snapshot     = true
+  storage_encrypted       = true
+  backup_retention_period = 7
+  deletion_protection     = true
+  skip_final_snapshot     = false
+  final_snapshot_identifier = "demo-snapshot-final"
+  # checkov:skip=CKV_AWS_157:Demo exclusivamente estatico sin datos ni despliegue; aprobacion=EXC-001 Daniel-1A responsable del repositorio, chat Codex 2026-11-23; vence=2026-12-07
   multi_az                = false
-  auto_minor_version_upgrade = false
-  copy_tags_to_snapshot   = false
+  auto_minor_version_upgrade = true
+  copy_tags_to_snapshot   = true
+  kms_key_id                          = data.aws_kms_key.demo.arn
+  enabled_cloudwatch_logs_exports     = ["postgresql", "upgrade"]
+  monitoring_interval                 = 60
+  monitoring_role_arn                  = data.aws_iam_role.rds_monitoring.arn
+  iam_database_authentication_enabled  = true
+  performance_insights_enabled        = true
+  performance_insights_kms_key_id      = data.aws_kms_key.demo.arn
+  parameter_group_name                = aws_db_parameter_group.demo.name
+  tags = {
+    Owner = "equipo-seguridad-iac"
+  }
 }
 
 # Referencias didacticas a recursos preexistentes: no son credenciales.
@@ -76,4 +90,24 @@ data "aws_kms_key" "demo" {
 
 data "aws_iam_role" "rds_monitoring" {
   name = "demo-rds-enhanced-monitoring"
+}
+
+resource "aws_db_parameter_group" "demo" {
+  name   = "demo-postgres-seguro"
+  family = "postgres16"
+  parameter {
+    name  = "log_statement"
+    value = "ddl"
+  }
+  parameter {
+    name  = "log_min_duration_statement"
+    value = "1000"
+  }
+  parameter {
+    name  = "rds.force_ssl"
+    value = "1"
+  }
+  tags = {
+    Owner = "equipo-seguridad-iac"
+  }
 }

@@ -4,7 +4,15 @@ Practica de analisis estatico de Terraform y Dockerfile con Checkov y GitHub Act
 No requiere AWS ni despliegues. Los archivos de `infra/` y `docker/` son
 INTENCIONALMENTE INSEGUROS: no ejecutar `terraform apply` ni publicar la imagen.
 
-## Estado inicial
+## Estado de la rama de remediacion
+
+Se corrigieron 22 hallazgos y se documento una unica excepcion aprobada
+(CKV_AWS_157). El escaneo local termina con codigo 0. Ver
+`docs/remediacion.md` y `docs/excepcion-EXC-001.md`.
+El PR de remediacion y su evidencia verde en GitHub estan pendientes.
+La siguiente seccion conserva las instrucciones de la linea base historica.
+
+## Estado inicial (historico)
 
 Este es el esqueleto y la linea base insegura. El gate debe fallar hasta que
 se corrijan los hallazgos. Todavia no hay PR, proteccion de rama, aprobacion
